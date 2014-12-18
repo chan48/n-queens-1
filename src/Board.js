@@ -79,12 +79,15 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var count = _(this.get(rowIndex)).reduce(function(memo, value) {
+        return memo + value;
+      });
+      return count > 1;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      return _.any(this.indices(), this.hasRowConflictAt.bind(this));
     },
 
 
@@ -94,12 +97,15 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var count = _.reduce(this.rows(), function(memo, row) {
+        return memo + row[colIndex];
+      }, 0);
+      return count > 1;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      return _.any(this.indices(), this.hasColConflictAt.bind(this));
     },
 
 
@@ -109,12 +115,20 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var n = this.get('n');
+      var count = _.reduce(this.rows(), function(memo, row, rowI) {
+        var colPoint = rowI + majorDiagonalColumnIndexAtFirstRow;
+        if (colPoint >= 0 && colPoint < n) {
+          return memo + row[colPoint];
+        }
+        return memo;
+      }, 0);
+      return count > 1;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      return _.any(_.range(-1 * this.get('n'), this.get('n')), this.hasMajorDiagonalConflictAt.bind(this));
     },
 
 
@@ -124,16 +138,29 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var n = this.get('n');
+      var count = _.reduce(this.rows(), function(memo, row, rowI) {
+        var colPoint = minorDiagonalColumnIndexAtFirstRow - rowI;
+        if (colPoint >= 0 && colPoint < n) {
+          return memo + row[colPoint];
+        }
+        return memo;
+      }, 0);
+      return count > 1;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      return _.any(_.range(2 * this.get('n') - 1), this.hasMinorDiagonalConflictAt.bind(this));
+    },
+
+    // Our helper functions:
+
+    indices: function() {
+      return _.range(this.get('n'));
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
-
 
   });
 
