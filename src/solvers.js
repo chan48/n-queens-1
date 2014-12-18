@@ -13,59 +13,43 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
+window.searchNRooks = function(n, cap) {
 
-  // var rootTree = function(rowNum, colNum) {
-  //   if (colNum === n) {
-  //     //no possibilities on this row
-  //     return;
-  //   } else if (rowNum === n) {
-  //     //finished the board
-  //     solutions.push(board.rows());
-  //     return;
-  //   }
-
-  //   board.togglePiece(rowNum,colNum);
-
-  //   if(!board.hasAnyRooksConflicts()) {
-  //     for (var i = 0; i < ) {
-  //       row[i]
-  //     };
-  //     rootTree(rowNum+1,0);
-  //   } else {
-  //     board.togglePiece(rowNum,colNum);
-  //     rootTree(rowNum,colNum+1);
-  //   }
-  // };
-
-
-window.findNRooksSolution = function(n) {
   var board = new Board({n:n});
-  var solution = null;
-  if (n < 1) {
-    return null;
-  }
+  var solutions = [];
 
-  var rootTree = function(rowNum, colNum) {
+  var searchTree = function(rowNum, colNum) {
     if (colNum === n) {
       //no possibilities on this row
       return;
     } else if (rowNum === n) {
       //finished the board
-      solution = board.rows();
+      solutions.push(board.rows());
       return;
     }
 
     board.togglePiece(rowNum,colNum);
 
     if(!board.hasAnyRooksConflicts()) {
-      rootTree(rowNum+1,0);
-    } else {
-      board.togglePiece(rowNum,colNum);
-      rootTree(rowNum,colNum+1);
+      searchTree(rowNum+1,0);
+      if(cap) {
+        return;
+      }
     }
+
+
+    board.togglePiece(rowNum,colNum);
+    searchTree(rowNum,colNum+1);
   };
 
-  rootTree(0,0);
+  searchTree(0,0);
+
+  return solutions;
+};
+
+window.findNRooksSolution = function(n) {
+
+  var solution = searchNRooks(n,1)[0];
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
 
@@ -76,15 +60,12 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  // var solutions = [];
-  // var solutionCount = undefined; //fixme
 
-  // solutions.push(findNRooksSolution())
+  var solutionCount = searchNRooks(n).length;
 
-  // solutionCount = solutions.length;
+  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
 
-  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  // return solutionCount;
+  return solutionCount;
 };
 
 
