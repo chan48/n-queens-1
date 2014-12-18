@@ -51,7 +51,16 @@
     },
 
     hasAnyQueensConflicts: function() {
+      // O(n^2)
       return this.hasAnyRooksConflicts() || this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
+    },
+
+    smartQueenConflictsOn: function(rowIndex, colIndex) {
+      return (
+        this.hasColConflictAt(colIndex) ||
+        this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)) ||
+        this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex))
+      );
     },
 
     _isInBounds: function(rowIndex, colIndex) {
